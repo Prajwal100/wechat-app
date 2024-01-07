@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/users.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { hashPassword } from 'src/utils/helpers';
 
 @Injectable()
 export class UsersService {
@@ -26,7 +27,6 @@ export class UsersService {
 
       return user;
     } catch (error) {
-      console.error(error);
       throw new Error('Something went wrong');
     }
   }
@@ -35,17 +35,16 @@ export class UsersService {
     try {
       const { email } = createUserDto;
       const isExist = await this.findByUsernameOrEmail(email);
-
       if (isExist) {
         throw new Error(`User already existed with email ID ${email}`);
       }
 
-      await this.userRepository.save(createUserDto);
+      createUserDto.password = await hashPassword(createUserDto.password);
 
-      return this.findByUsernameOrEmail(email);
+      return await this.userRepository.save(createUserDto);
     } catch (error) {
       console.error(error);
-      throw new Error('Something went wrong');
+      throw new Error(error.message);
     }
   }
 }
