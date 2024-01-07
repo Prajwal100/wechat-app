@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: nestjs-container
+    build: 
+      context: ./server
+    ports:
+      - 4000:4000
+    depends_on:
+      - db
+    environment:
+      MYSQL_DB_HOST: db
+      MYSQL_DB_PORT: 3306
+      MYSQL_DB_USERNAME: root
+      MYSQL_DB_NAME: wechat_db
+      MYSQL_DB_PASSWORD: ""
+
+      COOKIE_SECRET: 'DLKJFOEIWRJLSKFDJEJLDSKFJSLGKJLSG'
+
+    volumes:
+      - nestjs-data:/user/src/app
+
+    develop:
+      watch:
+        - path: ./server/package.json
+          action: rebuild
+        - path: ./server/package-lock.json
+          action: rebuild
+
+        - path: ./server
+          target: /usr/src/app
+          action: sync
+
+
+  web:
+    container_name: reactjs-container
+    build:
+      context: ./client
+    ports:
+      - 3000:3000
+    depends_on:
+      - api
+    environment:
+      REACT_APP_API_URL: http://localhost:4000
+
+    volumes:
+      - reactjs-data:/app
+
+    develop:
+      watch:
+        - path: ./client/package.json
+          action: rebuild
+        - path: ./client/package-lock.json
+          action: rebuild
+
+        - path: ./client
+          target: /app
+          action: sync
+
+  db:
+    container_name: mysql-container
+    image: mysql:latest
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: wechat_db
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  nestjs-data:
+  reactjs-data:
+  mysql-data:
