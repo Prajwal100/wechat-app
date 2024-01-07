@@ -1,9 +1,15 @@
-export enum Routes{
-    AUTH='auth',
-    USERS='users',
+export enum STATUS{
+    Active = 'active',
+    Inactive = 'inactive'
 }
 
-export enum Services{
-    AUTH='AUTH_SERVICE',
-    USER='USER_SERVICE'
+export enum GENDER{
+    Male='male',
+    Female='female',
 }
+
+
+export const JWTCONSTANTS = {
+    secret: 'WRIEWROWEIJR984RU9WIUOWIEJROIWERUWOE',
+    adminSecret: 'admin.giibee.com',
+  };

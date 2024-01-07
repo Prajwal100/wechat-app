@@ -8,13 +8,15 @@ services:
     ports:
       - 4000:4000
     depends_on:
-      - db
+      - mysql_db
     environment:
-      MYSQL_DB_HOST: db
+      MYSQL_DB_HOST: mysql_db
       MYSQL_DB_PORT: 3306
       MYSQL_DB_USERNAME: root
       MYSQL_DB_NAME: wechat_db
       MYSQL_DB_PASSWORD: ""
+
+      MYSQL_SYNC: true
 
       COOKIE_SECRET: 'DLKJFOEIWRJLSKFDJEJLDSKFJSLGKJLSG'
 
@@ -58,7 +60,7 @@ services:
           target: /app
           action: sync
 
-  db:
+  mysql_db:
     container_name: mysql-container
     image: mysql:latest
     ports:
